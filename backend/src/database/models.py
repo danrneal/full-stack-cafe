@@ -16,7 +16,7 @@ from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 
 DB_DIALECT = 'sqlite'
-DB_NAME = 'database'
+DB_NAME = 'test.db'
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = f'sqlite:///{os.path.join(PROJECT_DIR, DB_NAME)}'
 
@@ -29,7 +29,7 @@ def setup_db(app):
     Args:
         app: A flask app
     """
-    app.config["SQLALCHEMY_DATABASE_URI"] = DB_NAME
+    app.config["SQLALCHEMY_DATABASE_URI"] = DB_PATH
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
