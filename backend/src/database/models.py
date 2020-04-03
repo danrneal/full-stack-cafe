@@ -10,10 +10,10 @@ Classes:
     Drink()
 """
 
-import json
 import os
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, ForeignKey
+from sqlalchemy.orm import relationship
 
 DB_DIALECT = 'sqlite'
 DB_NAME = 'database'
@@ -52,39 +52,8 @@ class Drink(db.Model):
     __tablename__ = 'drinks'
 
     id = Column(Integer().with_variant(Integer, 'sqlite'), primary_key=True)
-    title = Column(String(80), unique=True)
-    # the ingredients blob - this stores a lazy json blob
-    # the required datatype is [{'color': string,'name':string,'parts':number}]
-    recipe = Column(String(180), nullable=False)
-
-    def short(self):
-        '''
-        short()
-            short form representation of the Drink model
-        '''
-        print(json.loads(self.recipe))
-        short_recipe = [
-            {
-                'color': r['color'],
-                'parts': r['parts']
-            } for r in json.loads(self.recipe)
-        ]
-        return {
-            'id': self.id,
-            'title': self.title,
-            'recipe': short_recipe
-        }
-
-    def long(self):
-        '''
-        long()
-            long form representation of the Drink model
-        '''
-        return {
-            'id': self.id,
-            'title': self.title,
-            'recipe': json.loads(self.recipe)
-        }
+    name = Column(String(80), unique=True)
+    recipe = relationship('Recipe', backref='drink')
 
     def insert(self):
         """Inserts a new drink object into the db"""
@@ -100,5 +69,100 @@ class Drink(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def __repr__(self):
-        return json.dumps(self.short())
+    def format(self):
+        """Formats the drink as a dict
+
+        Returns:
+            drink: A dict representing the drink object
+        """
+
+        drink = {
+            'id': self.id,
+            'name': self.name,
+            'recipe': [recipe.format() for recipe in self.recipe],
+        }
+
+        return drink
+
+
+class Recipe(db.Model):
+    """A model representing a recipe for a drink
+
+    Attributes:
+        id: An int that serves as the unique identifier for the recipe
+        ingredient_id: The id of the ingredient that goes into the recipe
+        parts: An int representing the number of parts of the drink that this
+            recipe represents
+        drink_id: The id of the drink that this recipe belongs to
+    """
+
+    __tablename__ = 'recipes'
+
+    id = Column(Integer().with_variant(Integer, 'sqlite'), primary_key=True)
+    ingredient_id = Column(
+        Integer().with_variant(Integer, 'sqlite'),
+        ForeignKey('ingredients.id')
+    )
+    parts = Column(Integer().with_variant(Integer, 'sqlite'))
+    drink_id = Column(
+        Integer().with_variant(Integer, 'sqlite'),
+        ForeignKey('drinks.id')
+    )
+
+    def insert(self):
+        """Inserts a new recipe object into the db"""
+        db.session.add(self)
+        db.session.commit()
+
+    def format(self):
+        """Formats the recipe as a dict
+
+        Returns:
+            recipe: A dict representing the recipe object
+        """
+
+        recipe = {
+            'id': self.id,
+            'name': self.ingredient.name,
+            'color': self.ingredient.color,
+            'parts': self.parts,
+        }
+
+        return recipe
+
+
+class Ingredient(db.Model):
+    """A model representing an ingredient that goes in recipes
+
+    Attributes:
+        id: An int that serves as the unique identifier for the ingredient
+        name: A str representing the name of the ingredient
+        color: A str representing the color of the ingredient
+    """
+
+    __tablename__ = 'ingredients'
+
+    id = Column(Integer().with_variant(Integer, 'sqlite'), primary_key=True)
+    name = Column(String(80), unique=True)
+    color = Column(String(80))
+    recipe = relationship('Recipe', backref='ingredient')
+
+    def insert(self):
+        """Inserts a new ingredient object into the db"""
+        db.session.add(self)
+        db.session.commit()
+
+    def format(self):
+        """Formats the ingredient as a dict
+
+        Returns:
+            ingredient: A dict representing the ingredient object
+        """
+
+        ingredient = {
+            'id': self.id,
+            'name': self.name,
+            'color': self.color,
+        }
+
+        return ingredient
