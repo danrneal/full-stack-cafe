@@ -54,8 +54,8 @@ class Drink(db.Model):
     id = Column(Integer().with_variant(Integer, 'sqlite'), primary_key=True)
     title = Column(String(80), unique=True)
     # the ingredients blob - this stores a lazy json blob
-    # the required datatype is [{'color': string, 'name':string, 'parts':number}]
-    recipe =  Column(String(180), nullable=False)
+    # the required datatype is [{'color': string,'name':string,'parts':number}]
+    recipe = Column(String(180), nullable=False)
 
     def short(self):
         '''
@@ -63,7 +63,12 @@ class Drink(db.Model):
             short form representation of the Drink model
         '''
         print(json.loads(self.recipe))
-        short_recipe = [{'color': r['color'], 'parts': r['parts']} for r in json.loads(self.recipe)]
+        short_recipe = [
+            {
+                'color': r['color'],
+                'parts': r['parts']
+            } for r in json.loads(self.recipe)
+        ]
         return {
             'id': self.id,
             'title': self.title,
