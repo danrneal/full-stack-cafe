@@ -1,0 +1,4 @@
+-r requirements.txt
+autopep8==1.5
+pylint==2.4.4
+pylint-flask-sqlalchemy==0.2.0
