@@ -5,6 +5,8 @@ env/
 __pycache__/
 test.db
 .env
+*.db
+!starter.db
 
 # OS generated files #
 ######################
