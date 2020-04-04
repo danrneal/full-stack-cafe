@@ -40,14 +40,14 @@ class Drink(db.Model):
 
     Attributes:
         id: An int that serves as the unique identifier for a drink
-        name: A str representing the name of the drink
+        title: A str representing the name of the drink
     """
 
     __tablename__ = 'drinks'
 
     id = Column(Integer().with_variant(Integer, 'sqlite'), primary_key=True)
-    name = Column(String(80), unique=True)
-    recipe = relationship('Recipe', backref='drink')
+    title = Column(String(80), unique=True)
+    recipe = relationship('Ingredient', backref='drink')
 
     def insert(self):
         """Inserts a new drink object into the db"""
@@ -72,74 +72,35 @@ class Drink(db.Model):
 
         drink = {
             'id': self.id,
-            'name': self.name,
-            'recipe': [recipe.format() for recipe in self.recipe],
+            'title': self.title,
+            'recipe': [ingredient.format() for ingredient in self.recipe],
         }
 
         return drink
 
 
-class Recipe(db.Model):
-    """A model representing a recipe for a drink
-
-    Attributes:
-        id: An int that serves as the unique identifier for the recipe
-        ingredient_id: The id of the ingredient that goes into the recipe
-        parts: An int representing the number of parts of the drink that this
-            recipe represents
-        drink_id: The id of the drink that this recipe belongs to
-    """
-
-    __tablename__ = 'recipes'
-
-    id = Column(Integer().with_variant(Integer, 'sqlite'), primary_key=True)
-    ingredient_id = Column(
-        Integer().with_variant(Integer, 'sqlite'),
-        ForeignKey('ingredients.id')
-    )
-    parts = Column(Integer().with_variant(Integer, 'sqlite'))
-    drink_id = Column(
-        Integer().with_variant(Integer, 'sqlite'),
-        ForeignKey('drinks.id')
-    )
-
-    def insert(self):
-        """Inserts a new recipe object into the db"""
-        db.session.add(self)
-        db.session.commit()
-
-    def format(self):
-        """Formats the recipe as a dict
-
-        Returns:
-            recipe: A dict representing the recipe object
-        """
-
-        recipe = {
-            'id': self.id,
-            'name': self.ingredient.name,
-            'color': self.ingredient.color,
-            'parts': self.parts,
-        }
-
-        return recipe
-
-
 class Ingredient(db.Model):
-    """A model representing an ingredient that goes in recipes
+    """A model representing an ingredient for a drink
 
     Attributes:
         id: An int that serves as the unique identifier for the ingredient
         name: A str representing the name of the ingredient
+        parts: An int representing the number of parts of the drink that this
+            ingredient represents
         color: A str representing the color of the ingredient
+        drink_id: The id of the drink that this ingredient belongs to
     """
 
     __tablename__ = 'ingredients'
 
     id = Column(Integer().with_variant(Integer, 'sqlite'), primary_key=True)
-    name = Column(String(80), unique=True)
+    name = Column(String(80))
+    parts = Column(Integer().with_variant(Integer, 'sqlite'))
     color = Column(String(80))
-    recipe = relationship('Recipe', backref='ingredient')
+    drink_id = Column(
+        Integer().with_variant(Integer, 'sqlite'),
+        ForeignKey('drinks.id')
+    )
 
     def insert(self):
         """Inserts a new ingredient object into the db"""
@@ -156,6 +117,7 @@ class Ingredient(db.Model):
         ingredient = {
             'id': self.id,
             'name': self.name,
+            'parts': self.parts,
             'color': self.color,
         }
 
