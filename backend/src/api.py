@@ -1,3 +1,16 @@
+"""A flask-based coffee API with Authorization and Authentication
+
+Anyone is able to view drinks stored in the db, those with elevated permissions
+are able to view extra info about the drinks in the db, those with post
+privilidges can create new drinks, those with patch privlidges can edit drinks,
+and those with delete privlidges can delete drinks.
+
+    Usage: flask run
+
+Attributes:
+    app: A flask Flack object creating the flask app
+"""
+
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from .auth.auth import requires_auth, AuthError
