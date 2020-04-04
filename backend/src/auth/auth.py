@@ -1,6 +1,18 @@
+"""Logic for authenticating users and verifying permissions for a request
+
+Attributes:
+    AUTH0_DOMAIN: A str representing the domain for the Auth0 app
+    ALGORITHMS: A list representing the accepted encryption algorithms for the
+        access token
+    API_IDENTIFIER: A str representing the unique identifier for the Auth0 api
+
+Classes:
+    AuthError()
+"""
+
+from functools import wraps
 import json
 from flask import request
-from functools import wraps
 from jose import jwt
 from six.moves.urllib.request import urlopen
 
