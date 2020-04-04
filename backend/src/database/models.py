@@ -8,6 +8,7 @@ Attributes:
 
 Classes:
     Drink()
+    Ingredient()
 """
 
 import os
