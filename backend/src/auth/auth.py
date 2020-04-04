@@ -158,19 +158,31 @@ def verify_decode_jwt(token):
     )
 
 
-'''
-@TODO implement check_permissions(permission, payload) method
-    @INPUTS
-        permission: string permission (i.e. 'post:drink')
-        payload: decoded jwt payload
-
-    it should raise an AuthError if permissions are not included in the payload
-        !!NOTE check your RBAC settings in Auth0
-    it should raise an AuthError if the requested permission string is not in the payload permissions array
-    return true otherwise
-'''
 def check_permissions(permission, payload):
-    raise Exception('Not Implemented')
+    """Checks if a decoded access token contains the required peermission
+
+    Args:
+        permission: A str representing the required permission
+        payload: A dict representing the decoded access token
+    """
+
+    permissions = payload.get('permissions')
+
+    if permissions is None:
+        raise AuthError({
+            'code': 'invalid_claims',
+            'description': (
+                'Incorrect claims, please check the role-based access control '
+                'settings'
+            )
+        }, 401)
+
+    if permission not in permissions:
+        raise AuthError({
+            'code': 'unauthorized',
+            'description': 'You are not authorized to access this resource'
+        }, 403)
+
 
 '''
 @TODO implement @requires_auth(permission) decorator method
