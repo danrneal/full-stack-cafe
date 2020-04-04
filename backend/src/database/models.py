@@ -23,13 +23,13 @@ DB_PATH = f'sqlite:///{os.path.join(PROJECT_DIR, DB_NAME)}'
 db = SQLAlchemy()
 
 
-def setup_db(app):
+def setup_db(app, db_path=DB_PATH):
     """Binds a flask application and a SQLAlchemy service
 
     Args:
         app: A flask app
     """
-    app.config['SQLALCHEMY_DATABASE_URI'] = DB_PATH
+    app.config['SQLALCHEMY_DATABASE_URI'] = db_path
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.app = app
     db.init_app(app)
