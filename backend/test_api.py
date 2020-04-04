@@ -40,6 +40,7 @@ class DrinkTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json.get('success'), True)
         self.assertTrue(response.json.get('drinks'))
+        self.assertIsNone(response.json.get('drinks')[0].get('name'))
 
 
 if __name__ == '__main__':

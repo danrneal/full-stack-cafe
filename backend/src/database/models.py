@@ -63,8 +63,8 @@ class Drink(db.Model):
         db.session.delete(self)
         db.session.commit()
 
-    def format(self):
-        """Formats the drink as a dict
+    def short_format(self):
+        """Formats the drink as a dict with the recipe in short format
 
         Returns:
             drink: A dict representing the drink object
@@ -73,7 +73,22 @@ class Drink(db.Model):
         drink = {
             'id': self.id,
             'title': self.title,
-            'recipe': [ingredient.format() for ingredient in self.recipe],
+            'recipe': [ingredient.short_format() for ingredient in self.recipe]
+        }
+
+        return drink
+
+    def long_format(self):
+        """Formats the drink as a dict with the recipe in long format
+
+        Returns:
+            drink: A dict representing the drink object
+        """
+
+        drink = {
+            'id': self.id,
+            'title': self.title,
+            'recipe': [ingredient.long_format() for ingredient in self.recipe],
         }
 
         return drink
@@ -107,15 +122,28 @@ class Ingredient(db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def format(self):
-        """Formats the ingredient as a dict
+    def short_format(self):
+        """Formats the ingredient as a dict in a short format
 
         Returns:
             ingredient: A dict representing the ingredient object
         """
 
         ingredient = {
-            'id': self.id,
+            'parts': self.parts,
+            'color': self.color,
+        }
+
+        return ingredient
+
+    def long_format(self):
+        """Formats the ingredient as a dict in a format that shows all details
+
+        Returns:
+            ingredient: A dict representing the ingredient object
+        """
+
+        ingredient = {
             'name': self.name,
             'parts': self.parts,
             'color': self.color,

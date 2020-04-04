@@ -37,7 +37,7 @@ def get_drinks():
     """
 
     drinks = Drink.query.order_by(Drink.id).all()
-    drinks = [drink.format() for drink in drinks]
+    drinks = [drink.short_format() for drink in drinks]
 
     response = jsonify({
         'success': True,
