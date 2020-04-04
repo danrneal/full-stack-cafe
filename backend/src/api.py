@@ -106,18 +106,61 @@ def create_drink():
     return response
 
 
-'''
-@TODO implement endpoint
-    PATCH /drinks/<id>
-        where <id> is the existing model id
-        it should respond with a 404 error if <id> is not found
-        it should update the corresponding row for <id>
-        it should require the 'patch:drinks' permission
-        it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drink} where
-        drink an array containing only the updated drink or appropriate status
-        code indicating reason for failure
-'''
+@requires_auth('patch:drinks')
+@app.route('/drinks/<int:drink_id>', methods=['PATCH'])
+def patch_book_rating(drink_id):
+    """Route handler for endpoint updating the a single drink
+
+    Args:
+        drink_id: An int representing the identifier for the drink to update
+
+    Returns:
+        response: A json object stating if the request was successful
+    """
+
+    drink = Drink.query.get(drink_id)
+
+    if drink is None:
+        abort(422)
+
+    try:
+
+        old_drink = drink.long_format()
+        title = request.json.get('title')
+        recipe = request.json.get('recipe')
+
+        if title is not None:
+            drink.title = title
+
+        if recipe is not None:
+
+            for ingredient in drink.recipe:
+                ingredient.delete()
+
+            for ingredient in request.json.get('recipe'):
+
+                ingredient = Ingredient(
+                    name=ingredient.get('name'),
+                    parts=ingredient.get('parts'),
+                    color=ingredient.get('color'),
+                    drink_id=drink.id,
+                )
+
+                ingredient.insert()
+
+        drink.update()
+
+    except AttributeError:
+        abort(400)
+
+    response = jsonify({
+        'success': True,
+        'updated_drink_id': drink_id,
+        'old_drink': old_drink,
+        'new_drink': drink.long_format(),
+    })
+
+    return response
 
 
 '''

@@ -17,7 +17,7 @@ from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 
 DB_DIALECT = 'sqlite'
-DB_NAME = 'database.db'
+DB_NAME = 'test.db'
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = f'sqlite:///{os.path.join(PROJECT_DIR, DB_NAME)}'
 
@@ -121,6 +121,11 @@ class Ingredient(db.Model):
     def insert(self):
         """Inserts a new ingredient object into the db"""
         db.session.add(self)
+        db.session.commit()
+
+    def delete(self):
+        """Deletes an existing ingredient object from the db"""
+        db.session.delete(self)
         db.session.commit()
 
     def short_format(self):
