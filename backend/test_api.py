@@ -7,9 +7,7 @@ Classes:
 import os
 import unittest
 from src.api import app
-from src.database.models import (
-    PROJECT_DIR, setup_db
-)
+from src.database.models import PROJECT_DIR, setup_db, Drink
 
 
 class DrinkTestCase(unittest.TestCase):
@@ -53,6 +51,37 @@ class DrinkTestCase(unittest.TestCase):
         self.assertIsNotNone(
             response.json['drinks'][0]['recipe'][0].get('name')
         )
+
+    def test_create_drink_success(self):
+        """Test successful creation of drink"""
+
+        new_drink = {
+            'title': 'Water',
+            'recipe': [{
+                'name': 'Water',
+                'parts': 1,
+                'color': 'blue',
+            }]
+        }
+
+        response = self.client().post('/drinks', json=new_drink)
+
+        created_drink_id = response.json.get('created_drink_id')
+        drink = Drink.query.get(created_drink_id)
+        new_drink['id'] = created_drink_id
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json.get('success'), True)
+        self.assertEqual(drink.long_format(), new_drink)
+
+    def test_create_drink_no_info_fail(self):
+        """Test failed drink creation when info is missing"""
+
+        response = self.client().post('/drinks')
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json.get('success'), False)
+        self.assertEqual(response.json.get('message'), 'Bad Request')
 
 
 if __name__ == '__main__':
