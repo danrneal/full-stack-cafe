@@ -40,7 +40,19 @@ class DrinkTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json.get('success'), True)
         self.assertTrue(response.json.get('drinks'))
-        self.assertIsNone(response.json.get('drinks')[0].get('name'))
+        self.assertIsNone(response.json['drinks'][0]['recipe'][0].get('name'))
+
+    def test_get_drinks_detail_success(self):
+        """Test successful retrieval of drinks detail"""
+
+        response = self.client().get('/drinks-detail')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json.get('success'), True)
+        self.assertTrue(response.json.get('drinks'))
+        self.assertIsNotNone(
+            response.json['drinks'][0]['recipe'][0].get('name')
+        )
 
 
 if __name__ == '__main__':
