@@ -136,7 +136,7 @@ class DrinkTestCase(unittest.TestCase):
         self.assertEqual(response.json.get('success'), False)
         self.assertEqual(response.json.get('message'), 'Unprocessable Entity')
 
-    def test_patch_question_no_info_fail(self):
+    def test_patch_drink_no_info_fail(self):
         """Test failed drink change when no info is given"""
 
         drink_id = Drink.query.order_by(Drink.id.desc()).first().id
@@ -146,6 +146,31 @@ class DrinkTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json.get('success'), False)
         self.assertEqual(response.json.get('message'), 'Bad Request')
+
+    def test_delete_drink_success(self):
+        """Test successful deletion of drink"""
+
+        drink_id = Drink.query.order_by(Drink.id.desc()).first().id
+
+        response = self.client().delete(f'/drinks/{drink_id}')
+
+        drink = Drink.query.get(drink_id)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json.get('success'), True)
+        self.assertEqual(response.json.get('deleted_drink_id'), drink_id)
+        self.assertIsNone(drink)
+
+    def test_delete_drink_out_of_range_fail(self):
+        """Test failed drink deletion when drink does not exist"""
+
+        drink_id = Drink.query.order_by(Drink.id.desc()).first().id
+
+        response = self.client().delete(f'/drinks/{drink_id+1}')
+
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(response.json.get('success'), False)
+        self.assertEqual(response.json.get('message'), 'Unprocessable Entity')
 
 
 if __name__ == '__main__':
