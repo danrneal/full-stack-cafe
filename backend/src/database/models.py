@@ -35,12 +35,6 @@ def setup_db(app, db_path=DB_PATH):
     db.init_app(app)
 
 
-def db_drop_and_create_all():
-    """Drops the database tables and starts fresh"""
-    db.drop_all()
-    db.create_all()
-
-
 class Drink(db.Model):
     """A model representing a drink
 
