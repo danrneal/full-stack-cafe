@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
+from .auth.auth import requires_auth
 from .database.models import setup_db, Drink
 
 app = Flask(__name__)
@@ -30,7 +31,7 @@ def after_request(response):
 
 @app.route('/drinks')
 def get_drinks():
-    """Route handler for endpoint showing all drinks
+    """Route handler for endpoint showing all drinks in short form
 
     Returns:
         response: A json object representing all drinks
@@ -47,15 +48,26 @@ def get_drinks():
     return response
 
 
-'''
-@TODO implement endpoint
-    GET /drinks-detail
-        it should require the 'get:drinks-detail' permission
-        it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drinks} where
-        drinks is the list of drinks or appropriate status code indicating
-        reason for failure
-'''
+@requires_auth('get:drinks-detail')
+@app.route('/drinks-detail')
+def get_drinks_detail():
+    """Route handler for endpoint showing all drinks in long form
+
+    Requires 'get:drinks-detail' permission
+
+    Returns:
+        response: A json object representing all drinks
+    """
+
+    drinks = Drink.query.order_by(Drink.id).all()
+    drinks = [drink.long_format() for drink in drinks]
+
+    response = jsonify({
+        'success': True,
+        'drinks': drinks,
+    })
+
+    return response
 
 
 '''
