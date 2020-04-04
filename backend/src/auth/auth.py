@@ -47,7 +47,7 @@ def get_token_auth_header():
     if not auth:
         raise AuthError(
             {
-                'code': 'authorization_header_missing',
+                'error_code': 'authorization_header_missing',
                 'description': 'Authorization header is expected',
             }, 401
         )
@@ -57,21 +57,21 @@ def get_token_auth_header():
     if parts[0].lower() != 'bearer':
         raise AuthError(
             {
-                'code': 'invalid_header',
+                'error_code': 'invalid_header',
                 'description': 'Authorization header must start with Bearer',
             }, 401
         )
     elif len(parts) == 1:
         raise AuthError(
             {
-                'code': 'invalid_header',
+                'error_code': 'invalid_header',
                 'description': 'Token not found',
             }, 401
         )
     elif len(parts) > 2:
         raise AuthError(
             {
-                'code': 'invalid_header',
+                'error_code': 'invalid_header',
                 'description': 'Authorization header must be Bearer token',
             }, 401
         )
@@ -99,7 +99,7 @@ def verify_decode_jwt(token):
     except jwt.JWTError:
         raise AuthError(
             {
-                'code': 'invalid_header',
+                'error_code': 'invalid_header',
                 'description': (
                     'Invalid header. Use an RS256 signed JWT Access Token'
                 ),
@@ -109,7 +109,7 @@ def verify_decode_jwt(token):
     if unverified_header['alg'] == 'HS256':
         raise AuthError(
             {
-                'code': 'invalid_header',
+                'error_code': 'invalid_header',
                 'description': (
                     'Invalid header. Use an RS256 signed JWT Access Token'
                 ),
@@ -139,14 +139,14 @@ def verify_decode_jwt(token):
         except jwt.ExpiredSignatureError:
             raise AuthError(
                 {
-                    'code': 'token_expired',
+                    'error_code': 'token_expired',
                     'description': 'Token is expired',
                 }, 401
             )
         except jwt.JWTClaimsError:
             raise AuthError(
                 {
-                    'code': 'invalid_claims',
+                    'error_code': 'invalid_claims',
                     'description': (
                         'Incorrect claims, please check the audience and '
                         'issuer'
@@ -156,7 +156,7 @@ def verify_decode_jwt(token):
         except Exception:
             raise AuthError(
                 {
-                    'code': 'invalid_header',
+                    'error_code': 'invalid_header',
                     'description': 'Unable to parse authentication token',
                 }, 401
             )
@@ -165,7 +165,7 @@ def verify_decode_jwt(token):
 
     raise AuthError(
         {
-            'code': 'invalid_header',
+            'error_code': 'invalid_header',
             'description': 'Unable to find appropriate key',
         }, 401
     )
@@ -183,7 +183,7 @@ def check_permissions(permission, payload):
 
     if permissions is None:
         raise AuthError({
-            'code': 'invalid_claims',
+            'error_code': 'invalid_claims',
             'description': (
                 'Incorrect claims, please check the role-based access control '
                 'settings'
@@ -192,7 +192,7 @@ def check_permissions(permission, payload):
 
     if permission not in permissions:
         raise AuthError({
-            'code': 'unauthorized',
+            'error_code': 'unauthorized',
             'description': 'You are not authorized to access this resource'
         }, 403)
 

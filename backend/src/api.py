@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from flask_cors import CORS
-from .auth.auth import requires_auth
-from .database.models import setup_db, Drink
+from .auth.auth import requires_auth, AuthError
+from .database.models import setup_db, Drink, Ingredient
 
 app = Flask(__name__)
 setup_db(app)
@@ -109,37 +109,107 @@ def get_drinks_detail():
 '''
 
 
-# Error Handling
-'''
-Example error handling for unprocessable entity
-'''
+@app.errorhandler(400)
+def bad_request(error):  # pylint: disable=unused-argument
+    """Error handler for 400 bad request
+
+    Args:
+        error: unused
+
+    Returns:
+        Response: A json object with the error code and message
+    """
+    response = jsonify({
+        'success': False,
+        'error_code': 400,
+        'message': 'Bad Request',
+    })
+    return response, 400
+
+
+@app.errorhandler(404)
+def not_found(error):  # pylint: disable=unused-argument
+    """Error handler for 404 not found
+
+    Args:
+        error: unused
+
+    Returns:
+        Response: A json object with the error code and message
+    """
+    response = jsonify({
+        'success': False,
+        'error_code': 404,
+        'message': 'Not Found',
+    })
+    return response, 404
+
+
+@app.errorhandler(405)
+def method_not_allowed(error):  # pylint: disable=unused-argument
+    """Error handler for 405 method not allowed
+
+    Args:
+        error: unused
+
+    Returns:
+        Response: A json object with the error code and message
+    """
+    response = jsonify({
+        'success': False,
+        'error_code': 405,
+        'message': 'Method Not Allowed',
+    })
+    return response, 405
+
+
 @app.errorhandler(422)
-def unprocessable(error):
-    return jsonify({
-        "success": False,
-        "error": 422,
-        "message": "unprocessable"
-    }), 422
+def unprocessable_entity(error):  # pylint: disable=unused-argument
+    """Error handler for 422 unprocessable entity
+
+    Args:
+        error: unused
+
+    Returns:
+        Response: A json object with the error code and message
+    """
+    response = jsonify({
+        'success': False,
+        'error_code': 422,
+        'message': 'Unprocessable Entity',
+    })
+    return response, 422
 
 
-'''
-@TODO implement error handlers using the @app.errorhandler(error) decorator
-    each error handler should return (with approprate messages):
-             jsonify({
-                    "success": False,
-                    "error": 404,
-                    "message": "resource not found"
-                    }), 404
+@app.errorhandler(500)
+def internal_server_error(error):  # pylint: disable=unused-argument
+    """Error handler for 500 internal server error
 
-'''
+    Args:
+        error: unused
 
-'''
-@TODO implement error handler for 404
-    error handler should conform to general task above
-'''
+    Returns:
+        Response: A json object with the error code and message
+    """
+    response = jsonify({
+        'success': False,
+        'error_code': 500,
+        'message': 'Internal Server Error',
+    })
+    return response, 500
 
 
-'''
-@TODO implement error handler for AuthError
-    error handler should conform to general task above
-'''
+@app.errorhandler(AuthError)
+def authorization_error(error):
+    """Error handler for authorization error
+
+    Args:
+        error: A dict representing the authorization error
+
+    Returns:
+        Response: A json object with the error code and message
+    """
+    response = jsonify(error.error)
+    response.status_code = error.status_code
+
+    return response
