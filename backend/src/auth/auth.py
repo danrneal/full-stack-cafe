@@ -184,18 +184,16 @@ def check_permissions(permission, payload):
         }, 403)
 
 
-'''
-@TODO implement @requires_auth(permission) decorator method
-    @INPUTS
-        permission: string permission (i.e. 'post:drink')
-
-    it should use the get_token_auth_header method to get the token
-    it should use the verify_decode_jwt method to decode the jwt
-    it should use the check_permissions method validate claims and check the requested permission
-    return the decorator which passes the decoded payload to the decorated method
-'''
 def requires_auth(permission=''):
+    """A decorator to authenticate users and verify permissions for a request
+
+    Args:
+        permission: A str representing the permission required to access the
+            requested resource
+    """
+
     def requires_auth_decorator(f):
+
         @wraps(f)
         def wrapper(*args, **kwargs):
             token = get_token_auth_header()
@@ -204,4 +202,5 @@ def requires_auth(permission=''):
             return f(payload, *args, **kwargs)
 
         return wrapper
+
     return requires_auth_decorator
