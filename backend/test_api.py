@@ -83,6 +83,70 @@ class DrinkTestCase(unittest.TestCase):
         self.assertEqual(response.json.get('success'), False)
         self.assertEqual(response.json.get('message'), 'Bad Request')
 
+    def test_patch_drink_success(self):
+        """Test successful changing of a drink"""
+
+        old_drink = Drink.query.order_by(Drink.id.desc()).first().long_format()
+        drink_id = old_drink['id']
+
+        new_drink = {
+            'title': 'Whiskey',
+            'recipe': [{
+                'name': 'Whisky',
+                'parts': 1,
+                'color': 'brown',
+            }]
+        }
+
+        response = self.client().patch(
+            f'/drinks/{drink_id}',
+            json=new_drink
+        )
+
+        new_drink['id'] = drink_id
+        drink = Drink.query.get(drink_id).long_format()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json.get('success'), True)
+        self.assertEqual(response.json.get('updated_drink_id'), drink_id)
+        self.assertEqual(response.json.get('old_drink'), old_drink)
+        self.assertEqual(response.json.get('new_drink'), new_drink)
+        self.assertEqual(drink, new_drink)
+
+    def test_patch_drink_out_of_range_fail(self):
+        """Test failed drink change when drink does not exist"""
+
+        drink_id = Drink.query.order_by(Drink.id.desc()).first().id
+
+        new_drink = {
+            'title': 'Whiskey',
+            'recipe': [{
+                'name': 'Whisky',
+                'parts': 1,
+                'color': 'brown',
+            }]
+        }
+
+        response = self.client().patch(
+            f'/drinks/{drink_id+1}',
+            json=new_drink
+        )
+
+        self.assertEqual(response.status_code, 422)
+        self.assertEqual(response.json.get('success'), False)
+        self.assertEqual(response.json.get('message'), 'Unprocessable Entity')
+
+    def test_patch_question_no_info_fail(self):
+        """Test failed drink change when no info is given"""
+
+        drink_id = Drink.query.order_by(Drink.id.desc()).first().id
+
+        response = self.client().patch(f'/drinks/{drink_id}')
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.json.get('success'), False)
+        self.assertEqual(response.json.get('message'), 'Bad Request')
+
 
 if __name__ == '__main__':
     unittest.main()
