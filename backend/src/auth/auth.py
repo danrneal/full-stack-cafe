@@ -1,13 +1,12 @@
 import json
-from flask import request, _request_ctx_stack
+from flask import request
 from functools import wraps
 from jose import jwt
-from urllib.request import urlopen
-
+from six.moves.urllib.request import urlopen
 
 AUTH0_DOMAIN = 'full-stack-cafe.auth0.com'
 ALGORITHMS = ['RS256']
-API_AUDIENCE = 'http://127.0.0.1/'
+API_IDENTIFIER = 'http://127.0.0.1/'
 
 
 class AuthError(Exception):
@@ -69,6 +68,96 @@ def get_token_auth_header():
     return token
 
 
+def verify_decode_jwt(token):
+    """Decodes and verifies the validity of the provided access token
+
+    Args:
+        token: A str representing the access token to be decoded and verified
+
+    Returns:
+        payload: A dict representing the decoded and verified access token
+    """
+
+    jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
+    jwks = json.loads(jsonurl.read())
+
+    try:
+        unverified_header = jwt.get_unverified_header(token)
+    except jwt.JWTError:
+        raise AuthError(
+            {
+                'code': 'invalid_header',
+                'description': (
+                    'Invalid header. Use an RS256 signed JWT Access Token'
+                ),
+            }, 401
+        )
+
+    if unverified_header['alg'] == 'HS256':
+        raise AuthError(
+            {
+                'code': 'invalid_header',
+                'description': (
+                    'Invalid header. Use an RS256 signed JWT Access Token'
+                ),
+            }, 401
+        )
+
+    rsa_key = {}
+    for key in jwks['keys']:
+        if key['kid'] == unverified_header['kid']:
+            rsa_key = {
+                'kty': key['kty'],
+                'kid': key['kid'],
+                'use': key['use'],
+                'n': key['n'],
+                'e': key['e'],
+            }
+
+    if rsa_key:
+        try:
+            payload = jwt.decode(
+                token,
+                rsa_key,
+                algorithms=ALGORITHMS,
+                audience=API_IDENTIFIER,
+                issuer=f'https://{AUTH0_DOMAIN}/',
+            )
+        except jwt.ExpiredSignatureError:
+            raise AuthError(
+                {
+                    'code': 'token_expired',
+                    'description': 'Token is expired',
+                }, 401
+            )
+        except jwt.JWTClaimsError:
+            raise AuthError(
+                {
+                    'code': 'invalid_claims',
+                    'description': (
+                        'Incorrect claims, please check the audience and '
+                        'issuer'
+                    ),
+                }, 401
+            )
+        except Exception:
+            raise AuthError(
+                {
+                    'code': 'invalid_header',
+                    'description': 'Unable to parse authentication token',
+                }, 401
+            )
+
+        return payload
+
+    raise AuthError(
+        {
+            'code': 'invalid_header',
+            'description': 'Unable to find appropriate key',
+        }, 401
+    )
+
+
 '''
 @TODO implement check_permissions(permission, payload) method
     @INPUTS
@@ -81,22 +170,6 @@ def get_token_auth_header():
     return true otherwise
 '''
 def check_permissions(permission, payload):
-    raise Exception('Not Implemented')
-
-'''
-@TODO implement verify_decode_jwt(token) method
-    @INPUTS
-        token: a json web token (string)
-
-    it should be an Auth0 token with key id (kid)
-    it should verify the token using Auth0 /.well-known/jwks.json
-    it should decode the payload from the token
-    it should validate the claims
-    return the decoded payload
-
-    !!NOTE urlopen has a common certificate error described here: https://stackoverflow.com/questions/50236117/scraping-ssl-certificate-verify-failed-error-for-http-en-wikipedia-org
-'''
-def verify_decode_jwt(token):
     raise Exception('Not Implemented')
 
 '''
