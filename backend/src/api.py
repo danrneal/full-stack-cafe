@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
 from .auth.auth import requires_auth, AuthError
 from .database.models import setup_db, Drink, Ingredient
@@ -29,7 +29,7 @@ def after_request(response):
     return response
 
 
-@app.route('/drinks')
+@app.route('/drinks', methods=['GET'])
 def get_drinks():
     """Route handler for endpoint showing all drinks in short form
 
@@ -70,16 +70,40 @@ def get_drinks_detail():
     return response
 
 
-'''
-@TODO implement endpoint
-    POST /drinks
-        it should create a new row in the drinks table
-        it should require the 'post:drinks' permission
-        it should contain the drink.long() data representation
-    returns status code 200 and json {"success": True, "drinks": drink} where
-        drink an array containing only the newly created drink or appropriate
-        status code indicating reason for failure
-'''
+@requires_auth('post:drinks')
+@app.route('/drinks', methods=['POST'])
+def create_drink():
+    """Route handler for endpoint to create a drink
+
+    Returns:
+        response: A json object containing the id of the drink that was created
+    """
+
+    try:
+
+        drink = Drink(title=request.json.get('title'))
+        drink.insert()
+
+        for ingredient in request.json.get('recipe'):
+
+            ingredient = Ingredient(
+                name=ingredient.get('name'),
+                parts=ingredient.get('parts'),
+                color=ingredient.get('color'),
+                drink_id=drink.id,
+            )
+
+            ingredient.insert()
+
+        response = jsonify({
+            'success': True,
+            'created_drink_id': drink.id,
+        })
+
+    except AttributeError:
+        abort(400)
+
+    return response
 
 
 '''
