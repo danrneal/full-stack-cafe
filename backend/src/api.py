@@ -215,8 +215,8 @@ def bad_request(error):  # pylint: disable=unused-argument
     """
     response = jsonify({
         'success': False,
-        'error_code': 400,
-        'message': 'Bad Request',
+        'error_code': 'bad_request',
+        'description': 'The request was malformed in some way',
     })
     return response, 400
 
@@ -233,8 +233,8 @@ def not_found(error):  # pylint: disable=unused-argument
     """
     response = jsonify({
         'success': False,
-        'error_code': 404,
-        'message': 'Not Found',
+        'error_code': 'not_found',
+        'description': 'The resource could not be found on the server',
     })
     return response, 404
 
@@ -251,8 +251,8 @@ def method_not_allowed(error):  # pylint: disable=unused-argument
     """
     response = jsonify({
         'success': False,
-        'error_code': 405,
-        'message': 'Method Not Allowed',
+        'error_code': 'method_not_allowed',
+        'description': 'Incorrect request method was specified',
     })
     return response, 405
 
@@ -269,8 +269,8 @@ def unprocessable_entity(error):  # pylint: disable=unused-argument
     """
     response = jsonify({
         'success': False,
-        'error_code': 422,
-        'message': 'Unprocessable Entity',
+        'error_code': 'unprocessable_entity',
+        'description': 'The request was unable to be fulfilled',
     })
     return response, 422
 
@@ -287,8 +287,8 @@ def internal_server_error(error):  # pylint: disable=unused-argument
     """
     response = jsonify({
         'success': False,
-        'error_code': 500,
-        'message': 'Internal Server Error',
+        'error_code': 'internal_server_error',
+        'description': 'Something went wrong on the server',
     })
     return response, 500
 
@@ -303,6 +303,7 @@ def authorization_error(error):
     Returns:
         Response: A json object with the error code and message
     """
+    error.error['success'] = False
     response = jsonify(error.error)
     response.status_code = error.status_code
 
