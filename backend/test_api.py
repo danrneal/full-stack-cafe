@@ -248,6 +248,7 @@ class ManagerDrinkTestCase(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json.get('success'), True)
+        self.assertIsNone(response.json.get('old_drink'))
         self.assertEqual(drink.long_format(), new_drink)
 
     def test_create_drink_no_info_fail(self):
@@ -334,19 +335,22 @@ class ManagerDrinkTestCase(unittest.TestCase):
     def test_delete_drink_success(self):
         """Test successful deletion of drink"""
 
-        drink_id = Drink.query.order_by(Drink.id.desc()).first().id
+        old_drink = Drink.query.order_by(Drink.id.desc()).first().long_format()
+        drink_id = old_drink['id']
 
         response = self.client().delete(
             f'/drinks/{drink_id}',
             headers=self.headers,
         )
 
-        drink = Drink.query.get(drink_id)
+        new_drink = Drink.query.get(drink_id)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json.get('success'), True)
         self.assertEqual(response.json.get('deleted_drink_id'), drink_id)
-        self.assertIsNone(drink)
+        self.assertEqual(response.json.get('old_drink'), old_drink)
+        self.assertIsNone(response.json.get('new_drink'))
+        self.assertIsNone(new_drink)
 
     def test_delete_drink_out_of_range_fail(self):
         """Test failed drink deletion when drink does not exist"""
