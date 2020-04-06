@@ -13,8 +13,8 @@ Attributes:
 
 from flask import Flask, jsonify, request, abort
 from flask_cors import CORS
-from .auth.auth import requires_auth, AuthError
-from .database.models import setup_db, Drink, Ingredient
+from src.auth.auth import requires_auth, AuthError
+from src.database.models import setup_db, Drink, Ingredient
 
 app = Flask(__name__)
 setup_db(app)
@@ -61,8 +61,8 @@ def get_drinks():
     return response
 
 
-@requires_auth('get:drinks-detail')
 @app.route('/drinks-detail')
+@requires_auth('get:drinks-detail')
 def get_drinks_detail():
     """Route handler for endpoint showing all drinks in long form
 
@@ -83,8 +83,8 @@ def get_drinks_detail():
     return response
 
 
-@requires_auth('post:drinks')
 @app.route('/drinks', methods=['POST'])
+@requires_auth('post:drinks')
 def create_drink():
     """Route handler for endpoint to create a drink
 
@@ -119,8 +119,8 @@ def create_drink():
     return response
 
 
-@requires_auth('patch:drinks')
 @app.route('/drinks/<int:drink_id>', methods=['PATCH'])
+@requires_auth('patch:drinks')
 def patch_book_rating(drink_id):
     """Route handler for endpoint updating the a single drink
 
@@ -176,8 +176,8 @@ def patch_book_rating(drink_id):
     return response
 
 
-@requires_auth('delete:drinks')
 @app.route('/drinks/<int:drink_id>', methods=['DELETE'])
+@requires_auth('delete:drinks')
 def delete_drink(drink_id):
     """Route handler for endpoint to delete a single drink
 
