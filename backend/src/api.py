@@ -111,6 +111,8 @@ def create_drink():
         response = jsonify({
             'success': True,
             'created_drink_id': drink.id,
+            'old_drink': None,
+            'new_drink': drink.long_format(),
         })
 
     except AttributeError:
@@ -193,11 +195,14 @@ def delete_drink(drink_id):
     if drink is None:
         abort(422)
 
+    old_drink = drink.long_format()
     drink.delete()
 
     response = jsonify({
         'success': True,
         'deleted_drink_id': drink_id,
+        'old_drink': old_drink,
+        'new_drink': None,
     })
 
     return response
