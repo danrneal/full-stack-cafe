@@ -112,14 +112,14 @@ export class DrinksService {
       this.http.patch(this.url + '/drinks/' + drink.id, drink, this.getHeaders())
       .subscribe( (res: any) => {
         if (res.success) {
-          this.drinksToItems(res.drinks);
+          this.drinksToItems([res.new_drink]);
         }
       });
     } else { // insert
       this.http.post(this.url + '/drinks', drink, this.getHeaders())
       .subscribe( (res: any) => {
         if (res.success) {
-          this.drinksToItems(res.drinks);
+          this.drinksToItems([res.new_drink]);
         }
       });
     }
