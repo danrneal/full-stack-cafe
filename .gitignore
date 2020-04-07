@@ -1,8 +1,8 @@
-venv/
-env/
-.vscode/
-.history/
-__pycache__/
+venv
+env
+.vscode
+.history
+__pycache__
 test.db
 .env
 *.db
