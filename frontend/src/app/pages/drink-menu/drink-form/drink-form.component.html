@@ -2,40 +2,49 @@
   <ion-toolbar>
     <ion-title *ngIf="isNew">New Drink Creator</ion-title>
     <ion-title *ngIf="!isNew">Drink Editor</ion-title>
+    <ion-button class="cancel" fill="clear" (click)="closeModal()">
+      <ion-icon name="close"></ion-icon>
+    </ion-button>
   </ion-toolbar>
 </ion-header>
 
 <ion-content *ngIf="drink">
-    <app-drink-graphic [drink]="drink"></app-drink-graphic>
+  <form (ngSubmit)="logForm()">
 
-    <form (ngSubmit)="logForm()">
-      <ion-item>
-        <ion-label>Drink Title</ion-label>
-        <ion-input type="text" [(ngModel)]="drink.title" name="title"></ion-input>
-      </ion-item>
+    <ion-item class="title">
+      <ion-label>Drink Title:</ion-label>
+      <ion-input type="text" [(ngModel)]="drink.title" name="title"></ion-input>
+      <ion-button *ngIf="auth.can('delete:drinks')" (click)="deleteClicked()">Delete</ion-button>
+      <app-drink-graphic [drink]="drink"></app-drink-graphic>
+    </ion-item>
 
-      <ion-item *ngFor="let ingredient of drink.recipe; let i = index;  trackBy: customTrackBy">
-        <ion-label>Ingredient Name</ion-label>
-        <ion-input [(ngModel)]="drink.recipe[i].name" [name]="'Ingredient Title'+i"></ion-input>
+    <ion-item class="ingredients item-interactive">
+      <ion-label class="name">Ingredient Name</ion-label>
+      <ion-label class="parts">Number of Parts</ion-label>
+      <ion-label class="color">Color</ion-label>
+      <ion-label class="hidden"></ion-label>
+    </ion-item>
 
-        <ion-label>Number of Parts</ion-label>
-        <ion-input type="number" [(ngModel)]="drink.recipe[i].parts" [name]="'Ingredient Parts'+i"></ion-input>
+    <ion-item class="ingredients" *ngFor="let ingredient of drink.recipe; let i = index;  trackBy: customTrackBy">
+      <ion-input class="name" [(ngModel)]="drink.recipe[i].name" [name]="'Ingredient Title'+i"
+        [readonly]="!auth.can('patch:drinks') || !auth.can('post:drinks')">
+      </ion-input>
+      <ion-input [readonly]="!auth.can('patch:drinks') || !auth.can('post:drinks')" class="parts" type="number"
+        style="max-width: 40px; margin: 0 60px" [(ngModel)]="drink.recipe[i].parts" [name]="'Ingredient Parts'+i"
+        [readonly]="!auth.can('patch:drinks') || !auth.can('post:drinks')">
+      </ion-input>
+      <ion-input class="color" type="text" [(ngModel)]="drink.recipe[i].color" [name]="'Ingredient Color'+i"
+        [readonly]="!auth.can('patch:drinks') || !auth.can('post:drinks')">
+      </ion-input>
+      <ion-button *ngIf="auth.can('patch:drinks') || auth.can('post:drinks')" (click)="removeIngredient(i)"
+        [disabled]="i==0 && drink.recipe.length==1">Remove</ion-button><br />
+      <ion-button *ngIf="auth.can('patch:drinks') || auth.can('post:drinks')" (click)="addIngredient(i)"
+        [disabled]="drink.recipe.length==5">Add</ion-button><br />
+    </ion-item>
 
-        <ion-label>Color</ion-label>
-        <ion-input type="text" [(ngModel)]="drink.recipe[i].color" [name]="'Ingredient Color'+i"></ion-input>
+    <div class="save">
+      <ion-button *ngIf="auth.can('patch:drinks') || auth.can('post:drinks')" (click)="saveClicked()">Save</ion-button>
+    </div>
 
-        <ion-button (click)="removeIngredient(i)" [disabled]="i==0 && drink.recipe.length==1">Remove</ion-button><br />
-        <ion-button (click)="addIngredient(i)" [disabled]="drink.recipe.length==5">ADD</ion-button><br />
-
-      </ion-item>
-
-      <ion-button 
-        [disabled]="!auth.can('delete:drinks')"
-        (click)="deleteClicked()">Delete</ion-button><br />
-      <ion-button (click)="closeModal()">Cancel</ion-button>
-      <ion-button 
-        [disabled]="!auth.can('patch:drinks') || !auth.can('post:drinks')"
-        (click)="saveClicked()">Save</ion-button>
-
-    </form>
+  </form>
 </ion-content>
