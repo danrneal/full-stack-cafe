@@ -463,6 +463,11 @@
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"value contains new drink\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.new_drink).to.be.an('object')",
 									"});"
 								],
 								"type": "text/javascript"
@@ -505,6 +510,11 @@
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"value contains new drink\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.new_drink).to.be.an('object')",
 									"});"
 								],
 								"type": "text/javascript"
@@ -548,6 +558,11 @@
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {",
 									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"value contains new drink\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.new_drink).to.be.null",
 									"});"
 								],
 								"type": "text/javascript"
