@@ -7,7 +7,8 @@
 <ion-content *ngIf="drinks && drinks.items">
 <div style="display: flex; justify-content: center; padding-top: 20px;">
     <ion-card
-     style="align-items: center; display: flex; flex-direction: column; cursor: pointer;" 
+     [ngStyle]="{'cursor': (auth.can('get:drinks-detail')) ? 'pointer' : 'auto'}"
+     style="align-items: center; display: flex; flex-direction: column" 
      *ngFor="let drink of Object.keys(drinks.items)"
      (click)="openForm(drinks.items[drink])">
         <ion-card-header>
