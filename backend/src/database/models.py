@@ -17,7 +17,7 @@ from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 
 DB_DIALECT = 'sqlite'
-DB_NAME = 'test.db'
+DB_NAME = 'database.db'
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = f'sqlite:///{os.path.join(PROJECT_DIR, DB_NAME)}'
 
