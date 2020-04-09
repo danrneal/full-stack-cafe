@@ -322,6 +322,8 @@ cp starter.db test.db
 
 From Postman import the postman collection (full-stack-cafe.postman_collection.json) into Postman and use a runner to run the entire collection.
 
+#### _Note: Postman tests need to be done with a fresh copy of the starter database or some of the test will fail. Specifically any drinks that have been deleted in previous tests will no longer be available causing all tests referencing those drinks to fail_
+
 ### Unit Tests
 
 Set a barista and manager token from Auth0 in your environment variables:
