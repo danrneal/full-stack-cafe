@@ -192,7 +192,7 @@ def check_permissions(permission, payload):
 
     if permission not in permissions:
         raise AuthError({
-            'error_code': 'unauthorized',
+            'error_code': 'forbidden',
             'description': 'You are not authorized to access this resource'
         }, 403)
 
