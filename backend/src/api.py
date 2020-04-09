@@ -2,8 +2,8 @@
 
 Anyone is able to view drinks stored in the db, those with elevated permissions
 are able to view extra info about the drinks in the db, those with post
-privilidges can create new drinks, those with patch privlidges can edit drinks,
-and those with delete privlidges can delete drinks.
+privileges can create new drinks, those with patch privileges can edit drinks,
+and those with delete privileges can delete drinks.
 
     Usage: flask run
 
