@@ -1,4 +1,8 @@
 -r requirements.txt
-autopep8==1.5
+black==19.10b0
+flake8==3.7.9
+flake8_docstrings==1.5.0
+pep8_naming==0.10.0
+pipreqs==0.4.10
 pylint==2.4.4
-pylint-flask-sqlalchemy==0.2.0
+pylint_flask_sqlalchemy==0.2.0
