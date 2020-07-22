@@ -1,4 +1,4 @@
-"""Logic for authenticating users and verifying permissions for a request
+"""Logic for authenticating users and verifying permissions for a request.
 
 Attributes:
     AUTH0_DOMAIN: A str representing the domain for the Auth0 app
@@ -22,7 +22,7 @@ API_IDENTIFIER = "http://127.0.0.1/"
 
 
 class AuthError(Exception):
-    """Creates an exception to handle authorization errors
+    """Creates an exception to handle authorization errors.
 
     Attributes:
         error: A dict containing information about the error
@@ -30,13 +30,14 @@ class AuthError(Exception):
     """
 
     def __init__(self, error, status_code):
+        """Set-up for AuthError Exception."""
         super().__init__()
         self.error = error
         self.status_code = status_code
 
 
 def get_token_auth_header():
-    """Obtains the access token from the Authorization Header
+    """Obtains the access token from the Authorization Header.
 
     Returns:
         token: A str representing the auth token from the Authorization Header
@@ -84,14 +85,14 @@ def get_token_auth_header():
     return token
 
 
-def verify_decode_jwt(token):
-    """Decodes and verifies the validity of the provided access token
+def get_token_rsa_key(token):
+    """Retrieves the rsa key of the provided access token.
 
     Args:
-        token: A str representing the access token to be decoded and verified
+        token: A str representing the access token to retrieve the rsa key for
 
     Returns:
-        payload: A dict representing the decoded and verified access token
+        rsa_key: A dict representing the rsa key for the the given token
     """
     jsonurl = urlopen(f"https://{AUTH0_DOMAIN}/.well-known/jwks.json")
     jwks = json.loads(jsonurl.read())
@@ -174,7 +175,7 @@ def verify_decode_jwt(token):
 
 
 def check_permissions(permission, payload):
-    """Checks if a decoded access token contains the required peermission
+    """Checks if a decoded access token contains the required peermission.
 
     Args:
         permission: A str representing the required permission
@@ -206,8 +207,8 @@ def check_permissions(permission, payload):
         )
 
 
-def requires_auth(permission=''):
-    """A decorator to authenticate users and verify permissions for a request
+def requires_auth(permission=""):
+    """A decorator to authenticate users and verify permissions for a request.
 
     Args:
         permission: A str representing the permission required to access the

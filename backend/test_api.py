@@ -1,4 +1,6 @@
-"""Test objects used to test the behavior of endpoints in api.py
+"""Test objects used to test the behavior of endpoints in api.py.
+
+Usage: test_api.py
 
 Attributes:
     BARISTA_TOKEN: An environmental variable representing a valid token
@@ -22,16 +24,17 @@ MANAGER_TOKEN = os.getenv("MANAGER_TOKEN")
 
 
 class PublicDrinkTestCase(unittest.TestCase):
-    """This class contains the test cases for the public drink endpoints
+    """This class contains the test cases for the public drink endpoints.
 
     Attributes:
-        app: A flask app from the flaskr app
-        client: A test client for the flask app to while testing
+        app: A flask app from api.py
+        client: A test client for the flask app to use while testing
         db_name: A str representing the name of the test database
         db_path: A str representing the location of the test database
     """
 
     def setUp(self):
+        """Set-up for PublicDrinkTestCase."""
         self.app = app
         app.config["DEBUG"] = False
         self.client = self.app.test_client
@@ -40,7 +43,7 @@ class PublicDrinkTestCase(unittest.TestCase):
         setup_db(self.app, self.db_path)
 
     def tearDown(self):
-        """Executed after each test"""
+        """Executed after each test."""
 
     def test_get_drinks_success(self):
         """Test successful retrieval of drinks."""
@@ -119,17 +122,18 @@ class PublicDrinkTestCase(unittest.TestCase):
 
 
 class BaristaDrinkTestCase(unittest.TestCase):
-    """This class contains test cases for barista-accessible drink endpoints
+    """This class contains test cases for barista-accessible drink endpoints.
 
     Attributes:
         headers: A dict representing the auth headers to be sent with requests
-        app: A flask app from the flaskr app
-        client: A test client for the flask app to while testing
+        app: A flask app from api.py
+        client: A test client for the flask app to use while testing
         db_name: A str representing the name of the test database
         db_path: A str representing the location of the test database
     """
 
     def setUp(self):
+        """Set-up for BaristaDrinkTestCase."""
         self.headers = {"Authorization": f"Bearer {BARISTA_TOKEN}"}
         self.app = app
         app.config["DEBUG"] = False
@@ -139,7 +143,7 @@ class BaristaDrinkTestCase(unittest.TestCase):
         setup_db(self.app, self.db_path)
 
     def tearDown(self):
-        """Executed after each test"""
+        """Executed after each test."""
 
     def test_get_drinks_detail_success(self):
         """Test successful retrieval of drinks detail."""
@@ -160,6 +164,8 @@ class BaristaDrinkTestCase(unittest.TestCase):
         self.assertEqual(response.json.get("success"), False)
         self.assertEqual(response.json.get("error_code"), "forbidden")
 
+    def test_update_drink_auth_fail(self):
+        """Test failed changing of a drink when unauthorized."""
         drink_id = Drink.query.order_by(Drink.id.desc()).first().id
 
         response = self.client().patch(
@@ -171,8 +177,7 @@ class BaristaDrinkTestCase(unittest.TestCase):
         self.assertEqual(response.json.get("error_code"), "forbidden")
 
     def test_delete_drink_auth_fail(self):
-        """Test failed deletion of drink when unauthorized"""
-
+        """Test failed deletion of drink when unauthorized."""
         drink_id = Drink.query.order_by(Drink.id.desc()).first().id
 
         response = self.client().delete(
@@ -185,17 +190,18 @@ class BaristaDrinkTestCase(unittest.TestCase):
 
 
 class ManagerDrinkTestCase(unittest.TestCase):
-    """This class contains test cases for manager-accessible drink endpoints
+    """This class contains test cases for manager-accessible drink endpoints.
 
     Attributes:
         headers: A dict representing the auth headers to be sent with requests
-        app: A flask app from the flaskr app
-        client: A test client for the flask app to while testing
+        app: A flask app from api.py
+        client: A test client for the flask app to use while testing
         db_name: A str representing the name of the test database
         db_path: A str representing the location of the test database
     """
 
     def setUp(self):
+        """Set-up for ManagerDrinkTestCase."""
         self.headers = {"Authorization": f"Bearer {MANAGER_TOKEN}"}
         self.app = app
         app.config["DEBUG"] = False
@@ -205,11 +211,10 @@ class ManagerDrinkTestCase(unittest.TestCase):
         setup_db(self.app, self.db_path)
 
     def tearDown(self):
-        """Executed after each test"""
+        """Executed after each test."""
 
     def test_create_drink_success(self):
-        """Test successful creation of drink"""
-
+        """Test successful creation of drink."""
         new_drink = {
             "title": "Water",
             "recipe": [{"name": "Water", "parts": 1, "color": "blue"}],
@@ -236,6 +241,8 @@ class ManagerDrinkTestCase(unittest.TestCase):
         self.assertEqual(response.json.get("success"), False)
         self.assertEqual(response.json.get("error_code"), "bad_request")
 
+    def test_update_drink_success(self):
+        """Test successful changing of a drink."""
         old_drink = Drink.query.order_by(Drink.id.desc()).first().long_format()
         drink_id = old_drink["id"]
 
@@ -258,9 +265,8 @@ class ManagerDrinkTestCase(unittest.TestCase):
         self.assertEqual(response.json.get("new_drink"), new_drink)
         self.assertEqual(drink, new_drink)
 
-    def test_patch_drink_out_of_range_fail(self):
-        """Test failed drink change when drink does not exist"""
-
+    def test_update_drink_out_of_range_fail(self):
+        """Test failed drink change when drink does not exist."""
         drink_id = Drink.query.order_by(Drink.id.desc()).first().id
 
         new_drink = {
@@ -278,9 +284,8 @@ class ManagerDrinkTestCase(unittest.TestCase):
             response.json.get("error_code"), "unprocessable_entity"
         )
 
-    def test_patch_drink_no_info_fail(self):
-        """Test failed drink change when no info is given"""
-
+    def test_update_drink_no_info_fail(self):
+        """Test failed drink change when no info is given."""
         drink_id = Drink.query.order_by(Drink.id.desc()).first().id
 
         response = self.client().patch(
@@ -292,8 +297,7 @@ class ManagerDrinkTestCase(unittest.TestCase):
         self.assertEqual(response.json.get("error_code"), "bad_request")
 
     def test_delete_drink_success(self):
-        """Test successful deletion of drink"""
-
+        """Test successful deletion of drink."""
         old_drink = Drink.query.order_by(Drink.id.desc()).first().long_format()
         drink_id = old_drink["id"]
 
@@ -311,8 +315,7 @@ class ManagerDrinkTestCase(unittest.TestCase):
         self.assertIsNone(new_drink)
 
     def test_delete_drink_out_of_range_fail(self):
-        """Test failed drink deletion when drink does not exist"""
-
+        """Test failed drink deletion when drink does not exist."""
         drink_id = Drink.query.order_by(Drink.id.desc()).first().id
 
         response = self.client().delete(

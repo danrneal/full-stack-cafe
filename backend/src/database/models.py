@@ -1,7 +1,6 @@
-"""Model objects used to model data for the db
+"""Model objects used to model data for the db.
 
 Attributes:
-    DB_DIALECT: A str representing the dialect of the db
     DB_NAME: A str representing the db in which to connect to
     DB_PATH: A str representing the location of the db
     db: A SQLAlchemy service
@@ -24,10 +23,12 @@ db = SQLAlchemy()
 
 
 def setup_db(app, db_path=DB_PATH):
-    """Binds a flask application and a SQLAlchemy service
+    """Binds a flask application and a SQLAlchemy service.
 
     Args:
         app: A flask app
+        db_path: A str representing the location of the db (default: global
+            DB_PATH)
     """
     app.config["SQLALCHEMY_DATABASE_URI"] = db_path
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -36,7 +37,7 @@ def setup_db(app, db_path=DB_PATH):
 
 
 class Drink(db.Model):
-    """A model representing a drink
+    """A model representing a drink.
 
     Attributes:
         id: An int that serves as the unique identifier for a drink
@@ -50,26 +51,26 @@ class Drink(db.Model):
     recipe = relationship("Ingredient", backref="drink")
 
     def insert(self):
-        """Inserts a new drink object into the db"""
+        """Inserts a new drink object into the db."""
         db.session.add(self)
         db.session.commit()
 
-    def update(self):
-        """Updates an existing question object in the db"""
+    @staticmethod
+    def update():
+        """Updates an existing question object in the db."""
         db.session.commit()
 
     def delete(self):
-        """Deletes an existing drink object from the db"""
+        """Deletes an existing drink object from the db."""
         db.session.delete(self)
         db.session.commit()
 
     def short_format(self):
-        """Formats the drink as a dict with the recipe in short format
+        """Formats the drink as a dict with the recipe in short format.
 
         Returns:
             drink: A dict representing the drink object
         """
-
         drink = {
             "id": self.id,
             "title": self.title,
@@ -81,12 +82,11 @@ class Drink(db.Model):
         return drink
 
     def long_format(self):
-        """Formats the drink as a dict with the recipe in long format
+        """Formats the drink as a dict with the recipe in long format.
 
         Returns:
             drink: A dict representing the drink object
         """
-
         drink = {
             "id": self.id,
             "title": self.title,
@@ -97,7 +97,7 @@ class Drink(db.Model):
 
 
 class Ingredient(db.Model):
-    """A model representing an ingredient for a drink
+    """A model representing an ingredient for a drink.
 
     Attributes:
         id: An int that serves as the unique identifier for the ingredient
@@ -119,22 +119,21 @@ class Ingredient(db.Model):
     )
 
     def insert(self):
-        """Inserts a new ingredient object into the db"""
+        """Inserts a new ingredient object into the db."""
         db.session.add(self)
         db.session.commit()
 
     def delete(self):
-        """Deletes an existing ingredient object from the db"""
+        """Deletes an existing ingredient object from the db."""
         db.session.delete(self)
         db.session.commit()
 
     def short_format(self):
-        """Formats the ingredient as a dict in a short format
+        """Formats the ingredient as a dict in a short format.
 
         Returns:
             ingredient: A dict representing the ingredient object
         """
-
         ingredient = {
             "parts": self.parts,
             "color": self.color,
@@ -143,12 +142,11 @@ class Ingredient(db.Model):
         return ingredient
 
     def long_format(self):
-        """Formats the ingredient as a dict in a format that shows all details
+        """Formats the ingredient as a dict in a format that shows all details.
 
         Returns:
             ingredient: A dict representing the ingredient object
         """
-
         ingredient = {
             "name": self.name,
             "parts": self.parts,

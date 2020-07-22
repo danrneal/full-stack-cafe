@@ -1,14 +1,14 @@
-"""A flask-based coffee API with Authorization and Authentication
+"""A flask-based coffee API with Authorization and Authentication.
 
 Anyone is able to view drinks stored in the db, those with elevated permissions
 are able to view extra info about the drinks in the db, those with post
 privileges can create new drinks, those with patch privileges can edit drinks,
 and those with delete privileges can delete drinks.
 
-    Usage: flask run
+Usage: flask run
 
 Attributes:
-    app: A flask Flack object creating the flask app
+    app: A flask Flask object creating the flask app
 """
 
 from flask import Flask, jsonify, request, abort
@@ -23,7 +23,7 @@ CORS(app)
 
 @app.after_request
 def after_request(response):
-    """Adds response headers after request
+    """Adds response headers after request.
 
     Args:
         response: The response object to add headers to
@@ -31,7 +31,6 @@ def after_request(response):
     Returns:
         response: The response object that the headers were added to
     """
-
     response.headers.add(
         "Access-Control-Allow-Headers", "Content-Type, Authorization, true"
     )
@@ -44,12 +43,11 @@ def after_request(response):
 
 @app.route("/drinks", methods=["GET"])
 def get_drinks():
-    """Route handler for endpoint showing all drinks in short form
+    """Route handler for endpoint showing all drinks in short form.
 
     Returns:
         response: A json object representing all drinks
     """
-
     drinks = Drink.query.order_by(Drink.id).all()
     drinks = [drink.short_format() for drink in drinks]
 
@@ -61,14 +59,13 @@ def get_drinks():
 @app.route("/drinks-detail")
 @requires_auth("get:drinks-detail")
 def get_drinks_detail():
-    """Route handler for endpoint showing all drinks in long form
+    """Route handler for endpoint showing all drinks in long form.
 
     Requires 'get:drinks-detail' permission
 
     Returns:
         response: A json object representing all drinks
     """
-
     drinks = Drink.query.order_by(Drink.id).all()
     drinks = [drink.long_format() for drink in drinks]
 
@@ -80,12 +77,11 @@ def get_drinks_detail():
 @app.route("/drinks", methods=["POST"])
 @requires_auth("post:drinks")
 def create_drink():
-    """Route handler for endpoint to create a drink
+    """Route handler for endpoint to create a drink.
 
     Returns:
         response: A json object containing the id of the drink that was created
     """
-
     try:
 
         drink = Drink(title=request.json.get("title"))
@@ -120,7 +116,7 @@ def create_drink():
 @app.route("/drinks/<int:drink_id>", methods=["PATCH"])
 @requires_auth("patch:drinks")
 def patch_book_rating(drink_id):
-    """Route handler for endpoint updating the a single drink
+    """Route handler for endpoint updating the a single drink.
 
     Args:
         drink_id: An int representing the identifier for the drink to update
@@ -128,7 +124,6 @@ def patch_book_rating(drink_id):
     Returns:
         response: A json object stating if the request was successful
     """
-
     drink = Drink.query.get(drink_id)
 
     if drink is None:
@@ -179,7 +174,7 @@ def patch_book_rating(drink_id):
 @app.route("/drinks/<int:drink_id>", methods=["DELETE"])
 @requires_auth("delete:drinks")
 def delete_drink(drink_id):
-    """Route handler for endpoint to delete a single drink
+    """Route handler for endpoint to delete a single drink.
 
     Args:
         drink_id: An int representing the identifier for a drink to delete
@@ -187,7 +182,6 @@ def delete_drink(drink_id):
     Returns:
         response: A json object containing the id of the drink that was deleted
     """
-
     drink = Drink.query.get(drink_id)
 
     if drink is None:
@@ -210,7 +204,7 @@ def delete_drink(drink_id):
 
 @app.errorhandler(400)
 def bad_request(error):  # pylint: disable=unused-argument
-    """Error handler for 400 bad request
+    """Error handler for 400 bad request.
 
     Args:
         error: unused
@@ -230,7 +224,7 @@ def bad_request(error):  # pylint: disable=unused-argument
 
 @app.errorhandler(404)
 def not_found(error):  # pylint: disable=unused-argument
-    """Error handler for 404 not found
+    """Error handler for 404 not found.
 
     Args:
         error: unused
@@ -250,7 +244,7 @@ def not_found(error):  # pylint: disable=unused-argument
 
 @app.errorhandler(405)
 def method_not_allowed(error):  # pylint: disable=unused-argument
-    """Error handler for 405 method not allowed
+    """Error handler for 405 method not allowed.
 
     Args:
         error: unused
@@ -270,7 +264,7 @@ def method_not_allowed(error):  # pylint: disable=unused-argument
 
 @app.errorhandler(422)
 def unprocessable_entity(error):  # pylint: disable=unused-argument
-    """Error handler for 422 unprocessable entity
+    """Error handler for 422 unprocessable entity.
 
     Args:
         error: unused
@@ -290,7 +284,7 @@ def unprocessable_entity(error):  # pylint: disable=unused-argument
 
 @app.errorhandler(500)
 def internal_server_error(error):  # pylint: disable=unused-argument
-    """Error handler for 500 internal server error
+    """Error handler for 500 internal server error.
 
     Args:
         error: unused
@@ -310,7 +304,7 @@ def internal_server_error(error):  # pylint: disable=unused-argument
 
 @app.errorhandler(AuthError)
 def authorization_error(error):
-    """Error handler for authorization error
+    """Error handler for authorization error.
 
     Args:
         error: A dict representing the authorization error
