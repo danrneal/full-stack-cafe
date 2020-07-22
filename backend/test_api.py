@@ -16,8 +16,9 @@ Classes:
 
 import os
 import unittest
+
 from src.api import app
-from src.database.models import PROJECT_DIR, setup_db, Drink
+from src.database.models import PROJECT_DIR, Drink, setup_db
 
 BARISTA_TOKEN = os.getenv("BARISTA_TOKEN")
 MANAGER_TOKEN = os.getenv("MANAGER_TOKEN")

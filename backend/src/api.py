@@ -11,10 +11,11 @@ Attributes:
     app: A flask Flask object creating the flask app
 """
 
-from flask import Flask, jsonify, request, abort
+from flask import Flask, abort, jsonify, request
 from flask_cors import CORS
-from src.auth.auth import requires_auth, AuthError
-from src.database.models import setup_db, Drink, Ingredient
+
+from src.auth.auth import AuthError, requires_auth
+from src.database.models import Drink, Ingredient, setup_db
 
 app = Flask(__name__)
 setup_db(app)
