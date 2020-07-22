@@ -107,7 +107,8 @@ def get_token_rsa_key(token):
                 "description": (
                     "Invalid header. Use an RS256 signed JWT Access Token"
                 ),
-            }, 401
+            },
+            401,
         )
 
     if unverified_header["alg"] == "HS256":
@@ -117,7 +118,8 @@ def get_token_rsa_key(token):
                 "description": (
                     "Invalid header. Use an RS256 signed JWT Access Token"
                 ),
-            }, 401
+            },
+            401,
         )
 
     rsa_key = {}
