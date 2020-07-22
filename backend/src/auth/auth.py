@@ -133,48 +133,64 @@ def get_token_rsa_key(token):
                 "e": key["e"],
             }
 
-    if rsa_key:
-        try:
-            payload = jwt.decode(
-                token,
-                rsa_key,
-                algorithms=ALGORITHMS,
-                audience=API_IDENTIFIER,
-                issuer=f'https://{AUTH0_DOMAIN}/',
-            )
-        except jwt.ExpiredSignatureError:
-            raise AuthError(
-                {
-                    'error_code': 'token_expired',
-                    'description': 'Token is expired',
-                }, 401
-            )
-        except jwt.JWTClaimsError:
-            raise AuthError(
-                {
-                    'error_code': 'invalid_claims',
-                    'description': (
-                        'Incorrect claims, please check the audience and '
-                        'issuer'
-                    ),
-                }, 401
-            )
-        except Exception:
-            raise AuthError(
-                {
-                    'error_code': 'invalid_header',
-                    'description': 'Unable to parse authentication token',
-                }, 401
-            )
+    if not rsa_key:
+        raise AuthError(
+            {
+                "error_code": "invalid_header",
+                "description": "Unable to find appropriate key",
+            },
+            401,
+        )
 
-        return payload
+    return rsa_key
 
-    raise AuthError(
-        {
-            'error_code': 'invalid_header',
-            'description': 'Unable to find appropriate key',
-        }, 401
-    )
+
+def verify_decode_jwt(token, rsa_key):
+    """Decodes and verifies the validity of the provided access token.
+
+    Args:
+        token: A str representing the access token to be decoded and verified
+        rsa_key: A dict representing the rsa key for the the given token
+
+    Returns:
+        payload: A dict representing the decoded and verified access token
+    """
+    try:
+        payload = jwt.decode(
+            token,
+            rsa_key,
+            algorithms=ALGORITHMS,
+            audience=API_IDENTIFIER,
+            issuer=f"https://{AUTH0_DOMAIN}/",
+        )
+    except jwt.ExpiredSignatureError:
+        raise AuthError(
+            {
+                "error_code": "token_expired",
+                "description": "Token is expired",
+            },
+            401,
+        )
+    except jwt.JWTClaimsError:
+        raise AuthError(
+            {
+                "error_code": "invalid_claims",
+                "description": (
+                    "Incorrect claims, please check the audience and " "issuer"
+                ),
+            },
+            401,
+        )
+    except Exception:
+        raise AuthError(
+            {
+                "error_code": "invalid_header",
+                "description": "Unable to parse authentication token",
+            },
+            401,
+        )
+
+    return payload
 
 
 def check_permissions(permission, payload):
@@ -219,11 +235,11 @@ def requires_auth(permission=""):
     """
 
     def requires_auth_decorator(f):
-
         @wraps(f)
         def wrapper(*args, **kwargs):
             token = get_token_auth_header()
-            payload = verify_decode_jwt(token)
+            rsa_key = get_token_rsa_key(token)
+            payload = verify_decode_jwt(token, rsa_key)
             check_permissions(permission, payload)
             return f(*args, **kwargs)
 
