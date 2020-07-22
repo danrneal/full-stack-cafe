@@ -16,9 +16,9 @@ from flask import request
 from jose import jwt
 from six.moves.urllib.request import urlopen
 
-AUTH0_DOMAIN = 'full-stack-cafe.auth0.com'
-ALGORITHMS = ['RS256']
-API_IDENTIFIER = 'http://127.0.0.1/'
+AUTH0_DOMAIN = "full-stack-cafe.auth0.com"
+ALGORITHMS = ["RS256"]
+API_IDENTIFIER = "http://127.0.0.1/"
 
 
 class AuthError(Exception):
@@ -41,39 +41,42 @@ def get_token_auth_header():
     Returns:
         token: A str representing the auth token from the Authorization Header
     """
-
-    auth = request.headers.get('Authorization', None)
+    auth = request.headers.get("Authorization", None)
 
     if not auth:
         raise AuthError(
             {
-                'error_code': 'authorization_header_missing',
-                'description': 'Authorization header is expected',
-            }, 401
+                "error_code": "authorization_header_missing",
+                "description": "Authorization header is expected",
+            },
+            401,
         )
 
     parts = auth.split()
 
-    if parts[0].lower() != 'bearer':
+    if parts[0].lower() != "bearer":
         raise AuthError(
             {
-                'error_code': 'invalid_header',
-                'description': 'Authorization header must start with Bearer',
-            }, 401
+                "error_code": "invalid_header",
+                "description": "Authorization header must start with Bearer",
+            },
+            401,
         )
     elif len(parts) == 1:
         raise AuthError(
             {
-                'error_code': 'invalid_header',
-                'description': 'Token not found',
-            }, 401
+                "error_code": "invalid_header",
+                "description": "Token not found",
+            },
+            401,
         )
     elif len(parts) > 2:
         raise AuthError(
             {
-                'error_code': 'invalid_header',
-                'description': 'Authorization header must be Bearer token',
-            }, 401
+                "error_code": "invalid_header",
+                "description": "Authorization header must be Bearer token",
+            },
+            401,
         )
 
     token = parts[1]
@@ -90,8 +93,7 @@ def verify_decode_jwt(token):
     Returns:
         payload: A dict representing the decoded and verified access token
     """
-
-    jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
+    jsonurl = urlopen(f"https://{AUTH0_DOMAIN}/.well-known/jwks.json")
     jwks = json.loads(jsonurl.read())
 
     try:
@@ -99,32 +101,32 @@ def verify_decode_jwt(token):
     except jwt.JWTError:
         raise AuthError(
             {
-                'error_code': 'invalid_header',
-                'description': (
-                    'Invalid header. Use an RS256 signed JWT Access Token'
+                "error_code": "invalid_header",
+                "description": (
+                    "Invalid header. Use an RS256 signed JWT Access Token"
                 ),
             }, 401
         )
 
-    if unverified_header['alg'] == 'HS256':
+    if unverified_header["alg"] == "HS256":
         raise AuthError(
             {
-                'error_code': 'invalid_header',
-                'description': (
-                    'Invalid header. Use an RS256 signed JWT Access Token'
+                "error_code": "invalid_header",
+                "description": (
+                    "Invalid header. Use an RS256 signed JWT Access Token"
                 ),
             }, 401
         )
 
     rsa_key = {}
-    for key in jwks['keys']:
-        if key['kid'] == unverified_header['kid']:
+    for key in jwks["keys"]:
+        if key["kid"] == unverified_header["kid"]:
             rsa_key = {
-                'kty': key['kty'],
-                'kid': key['kid'],
-                'use': key['use'],
-                'n': key['n'],
-                'e': key['e'],
+                "kty": key["kty"],
+                "kid": key["kid"],
+                "use": key["use"],
+                "n": key["n"],
+                "e": key["e"],
             }
 
     if rsa_key:
@@ -178,23 +180,30 @@ def check_permissions(permission, payload):
         permission: A str representing the required permission
         payload: A dict representing the decoded access token
     """
-
-    permissions = payload.get('permissions')
+    permissions = payload.get("permissions")
 
     if permissions is None:
-        raise AuthError({
-            'error_code': 'invalid_claims',
-            'description': (
-                'Incorrect claims, please check the role-based access control '
-                'settings'
-            )
-        }, 401)
+        raise AuthError(
+            {
+                "error_code": "invalid_claims",
+                "description": (
+                    "Incorrect claims, please check the role-based access "
+                    "control settings"
+                ),
+            },
+            401,
+        )
 
     if permission not in permissions:
-        raise AuthError({
-            'error_code': 'forbidden',
-            'description': 'You are not authorized to access this resource'
-        }, 403)
+        raise AuthError(
+            {
+                "error_code": "forbidden",
+                "description": (
+                    "You are not authorized to access this resource"
+                ),
+            },
+            403,
+        )
 
 
 def requires_auth(permission=''):

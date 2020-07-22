@@ -33,16 +33,16 @@ def after_request(response):
     """
 
     response.headers.add(
-        'Access-Control-Allow-Headers', 'Content-Type, Authorization, true'
+        "Access-Control-Allow-Headers", "Content-Type, Authorization, true"
     )
     response.headers.add(
-        'Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS'
+        "Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS"
     )
 
     return response
 
 
-@app.route('/drinks', methods=['GET'])
+@app.route("/drinks", methods=["GET"])
 def get_drinks():
     """Route handler for endpoint showing all drinks in short form
 
@@ -53,16 +53,13 @@ def get_drinks():
     drinks = Drink.query.order_by(Drink.id).all()
     drinks = [drink.short_format() for drink in drinks]
 
-    response = jsonify({
-        'success': True,
-        'drinks': drinks,
-    })
+    response = jsonify({"success": True, "drinks": drinks})
 
     return response
 
 
-@app.route('/drinks-detail')
-@requires_auth('get:drinks-detail')
+@app.route("/drinks-detail")
+@requires_auth("get:drinks-detail")
 def get_drinks_detail():
     """Route handler for endpoint showing all drinks in long form
 
@@ -75,16 +72,13 @@ def get_drinks_detail():
     drinks = Drink.query.order_by(Drink.id).all()
     drinks = [drink.long_format() for drink in drinks]
 
-    response = jsonify({
-        'success': True,
-        'drinks': drinks,
-    })
+    response = jsonify({"success": True, "drinks": drinks})
 
     return response
 
 
-@app.route('/drinks', methods=['POST'])
-@requires_auth('post:drinks')
+@app.route("/drinks", methods=["POST"])
+@requires_auth("post:drinks")
 def create_drink():
     """Route handler for endpoint to create a drink
 
@@ -94,26 +88,28 @@ def create_drink():
 
     try:
 
-        drink = Drink(title=request.json.get('title'))
+        drink = Drink(title=request.json.get("title"))
         drink.insert()
 
-        for ingredient in request.json.get('recipe'):
+        for ingredient in request.json.get("recipe"):
 
             ingredient = Ingredient(
-                name=ingredient.get('name'),
-                parts=ingredient.get('parts'),
-                color=ingredient.get('color'),
+                name=ingredient.get("name"),
+                parts=ingredient.get("parts"),
+                color=ingredient.get("color"),
                 drink_id=drink.id,
             )
 
             ingredient.insert()
 
-        response = jsonify({
-            'success': True,
-            'created_drink_id': drink.id,
-            'old_drink': None,
-            'new_drink': drink.long_format(),
-        })
+        response = jsonify(
+            {
+                "success": True,
+                "created_drink_id": drink.id,
+                "old_drink": None,
+                "new_drink": drink.long_format(),
+            }
+        )
 
     except AttributeError:
         abort(400)
@@ -121,8 +117,8 @@ def create_drink():
     return response
 
 
-@app.route('/drinks/<int:drink_id>', methods=['PATCH'])
-@requires_auth('patch:drinks')
+@app.route("/drinks/<int:drink_id>", methods=["PATCH"])
+@requires_auth("patch:drinks")
 def patch_book_rating(drink_id):
     """Route handler for endpoint updating the a single drink
 
@@ -141,8 +137,8 @@ def patch_book_rating(drink_id):
     try:
 
         old_drink = drink.long_format()
-        title = request.json.get('title')
-        recipe = request.json.get('recipe')
+        title = request.json.get("title")
+        recipe = request.json.get("recipe")
 
         if title is not None:
             drink.title = title
@@ -152,12 +148,12 @@ def patch_book_rating(drink_id):
             for ingredient in drink.recipe:
                 ingredient.delete()
 
-            for ingredient in request.json.get('recipe'):
+            for ingredient in request.json.get("recipe"):
 
                 ingredient = Ingredient(
-                    name=ingredient.get('name'),
-                    parts=ingredient.get('parts'),
-                    color=ingredient.get('color'),
+                    name=ingredient.get("name"),
+                    parts=ingredient.get("parts"),
+                    color=ingredient.get("color"),
                     drink_id=drink.id,
                 )
 
@@ -168,18 +164,20 @@ def patch_book_rating(drink_id):
     except AttributeError:
         abort(400)
 
-    response = jsonify({
-        'success': True,
-        'updated_drink_id': drink_id,
-        'old_drink': old_drink,
-        'new_drink': drink.long_format(),
-    })
+    response = jsonify(
+        {
+            "success": True,
+            "updated_drink_id": drink_id,
+            "old_drink": old_drink,
+            "new_drink": drink.long_format(),
+        }
+    )
 
     return response
 
 
-@app.route('/drinks/<int:drink_id>', methods=['DELETE'])
-@requires_auth('delete:drinks')
+@app.route("/drinks/<int:drink_id>", methods=["DELETE"])
+@requires_auth("delete:drinks")
 def delete_drink(drink_id):
     """Route handler for endpoint to delete a single drink
 
@@ -198,12 +196,14 @@ def delete_drink(drink_id):
     old_drink = drink.long_format()
     drink.delete()
 
-    response = jsonify({
-        'success': True,
-        'deleted_drink_id': drink_id,
-        'old_drink': old_drink,
-        'new_drink': None,
-    })
+    response = jsonify(
+        {
+            "success": True,
+            "deleted_drink_id": drink_id,
+            "old_drink": old_drink,
+            "new_drink": None,
+        }
+    )
 
     return response
 
@@ -218,11 +218,13 @@ def bad_request(error):  # pylint: disable=unused-argument
     Returns:
         Response: A json object with the error code and message
     """
-    response = jsonify({
-        'success': False,
-        'error_code': 'bad_request',
-        'description': 'The request was malformed in some way',
-    })
+    response = jsonify(
+        {
+            "success": False,
+            "error_code": "bad_request",
+            "description": "The request was malformed in some way",
+        }
+    )
     return response, 400
 
 
@@ -236,11 +238,13 @@ def not_found(error):  # pylint: disable=unused-argument
     Returns:
         Response: A json object with the error code and message
     """
-    response = jsonify({
-        'success': False,
-        'error_code': 'not_found',
-        'description': 'The resource could not be found on the server',
-    })
+    response = jsonify(
+        {
+            "success": False,
+            "error_code": "not_found",
+            "description": "The resource could not be found on the server",
+        }
+    )
     return response, 404
 
 
@@ -254,11 +258,13 @@ def method_not_allowed(error):  # pylint: disable=unused-argument
     Returns:
         Response: A json object with the error code and message
     """
-    response = jsonify({
-        'success': False,
-        'error_code': 'method_not_allowed',
-        'description': 'Incorrect request method was specified',
-    })
+    response = jsonify(
+        {
+            "success": False,
+            "error_code": "method_not_allowed",
+            "description": "Incorrect request method was specified",
+        }
+    )
     return response, 405
 
 
@@ -272,11 +278,13 @@ def unprocessable_entity(error):  # pylint: disable=unused-argument
     Returns:
         Response: A json object with the error code and message
     """
-    response = jsonify({
-        'success': False,
-        'error_code': 'unprocessable_entity',
-        'description': 'The request was unable to be fulfilled',
-    })
+    response = jsonify(
+        {
+            "success": False,
+            "error_code": "unprocessable_entity",
+            "description": "The request was unable to be fulfilled",
+        }
+    )
     return response, 422
 
 
@@ -290,11 +298,13 @@ def internal_server_error(error):  # pylint: disable=unused-argument
     Returns:
         Response: A json object with the error code and message
     """
-    response = jsonify({
-        'success': False,
-        'error_code': 'internal_server_error',
-        'description': 'Something went wrong on the server',
-    })
+    response = jsonify(
+        {
+            "success": False,
+            "error_code": "internal_server_error",
+            "description": "Something went wrong on the server",
+        }
+    )
     return response, 500
 
 
@@ -308,7 +318,7 @@ def authorization_error(error):
     Returns:
         Response: A json object with the error code and message
     """
-    error.error['success'] = False
+    error.error["success"] = False
     response = jsonify(error.error)
     response.status_code = error.status_code
 

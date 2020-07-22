@@ -16,10 +16,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, String, Integer, ForeignKey
 from sqlalchemy.orm import relationship
 
-DB_DIALECT = 'sqlite'
-DB_NAME = 'database.db'
+DB_NAME = "database.db"
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = f'sqlite:///{os.path.join(PROJECT_DIR, DB_NAME)}'
+DB_PATH = f"sqlite:///{os.path.join(PROJECT_DIR, DB_NAME)}"
 
 db = SQLAlchemy()
 
@@ -30,8 +29,8 @@ def setup_db(app, db_path=DB_PATH):
     Args:
         app: A flask app
     """
-    app.config['SQLALCHEMY_DATABASE_URI'] = db_path
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config["SQLALCHEMY_DATABASE_URI"] = db_path
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db.app = app
     db.init_app(app)
 
@@ -44,11 +43,11 @@ class Drink(db.Model):
         title: A str representing the name of the drink
     """
 
-    __tablename__ = 'drinks'
+    __tablename__ = "drinks"
 
-    id = Column(Integer().with_variant(Integer, 'sqlite'), primary_key=True)
+    id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
     title = Column(String(80))
-    recipe = relationship('Ingredient', backref='drink')
+    recipe = relationship("Ingredient", backref="drink")
 
     def insert(self):
         """Inserts a new drink object into the db"""
@@ -72,9 +71,11 @@ class Drink(db.Model):
         """
 
         drink = {
-            'id': self.id,
-            'title': self.title,
-            'recipe': [ingredient.short_format() for ingredient in self.recipe]
+            "id": self.id,
+            "title": self.title,
+            "recipe": [
+                ingredient.short_format() for ingredient in self.recipe
+            ],
         }
 
         return drink
@@ -87,9 +88,9 @@ class Drink(db.Model):
         """
 
         drink = {
-            'id': self.id,
-            'title': self.title,
-            'recipe': [ingredient.long_format() for ingredient in self.recipe],
+            "id": self.id,
+            "title": self.title,
+            "recipe": [ingredient.long_format() for ingredient in self.recipe],
         }
 
         return drink
@@ -107,15 +108,14 @@ class Ingredient(db.Model):
         drink_id: The id of the drink that this ingredient belongs to
     """
 
-    __tablename__ = 'ingredients'
+    __tablename__ = "ingredients"
 
-    id = Column(Integer().with_variant(Integer, 'sqlite'), primary_key=True)
+    id = Column(Integer().with_variant(Integer, "sqlite"), primary_key=True)
     name = Column(String(80))
-    parts = Column(Integer().with_variant(Integer, 'sqlite'))
+    parts = Column(Integer().with_variant(Integer, "sqlite"))
     color = Column(String(80))
     drink_id = Column(
-        Integer().with_variant(Integer, 'sqlite'),
-        ForeignKey('drinks.id')
+        Integer().with_variant(Integer, "sqlite"), ForeignKey("drinks.id")
     )
 
     def insert(self):
@@ -136,8 +136,8 @@ class Ingredient(db.Model):
         """
 
         ingredient = {
-            'parts': self.parts,
-            'color': self.color,
+            "parts": self.parts,
+            "color": self.color,
         }
 
         return ingredient
@@ -150,9 +150,9 @@ class Ingredient(db.Model):
         """
 
         ingredient = {
-            'name': self.name,
-            'parts': self.parts,
-            'color': self.color,
+            "name": self.name,
+            "parts": self.parts,
+            "color": self.color,
         }
 
         return ingredient
