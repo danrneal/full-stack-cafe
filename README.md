@@ -83,7 +83,7 @@ Navigate to `http://127.0.0.1:8100/` to see the app in action!
 
 ## API Reference
 
-The API reference documentation is available [here](https://documenter.getpostman.com/view/10868159/SzfDxQzs?version=latest)
+The API reference documentation is available [here](https://documenter.getpostman.com/view/10868159/SzfDxQzs?version=latest).
 
 ## Testing Suite
 
