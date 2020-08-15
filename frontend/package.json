@@ -53,10 +53,25 @@
     "karma-coverage-istanbul-reporter": "^2.1.1",
     "karma-jasmine": "~1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "prettier": "^2.0.5",
     "protractor": "^5.4.3",
+    "stylelint": "^13.6.1",
+    "stylelint-config-prettier": "^8.0.2",
+    "stylelint-config-sass-guidelines": "^7.0.0",
+    "stylelint-config-standard": "^20.0.0",
     "ts-node": "^8.8.1",
     "tslint": "~5.16.0",
+    "tslint-config-prettier": "^1.18.0",
     "typescript": "~3.5.3"
+  },
+  "prettier": {
+    "singleQuote": true
+  },
+  "stylelint": {
+    "extends": [
+      "stylelint-config-sass-guidelines",
+      "stylelint-config-prettier"
+    ]
   },
   "description": "An Ionic project"
 }
