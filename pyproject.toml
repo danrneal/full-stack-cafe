@@ -1,0 +1,28 @@
+[tool.black]
+line-length = 79
+
+[tool.isort]
+multi_line_import = 3
+include_trailing_comma = true
+
+[tool.pylint.messages_control]
+disable = [
+    "design",
+    "format",
+    "bare-except",
+    "unneeded-not",
+    "undefined-variable",
+    "unused-import",
+    "unused-variable",
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "missing-function-docstring",
+    "no-self-argument",
+    "invalid-name",
+    "bad-classmethod-argument",
+    "bad-mcs-classmethod-argument",
+    "f-string-without-interpolation",
+]
+
+[tool.pylint.typecheck]
+generated-members = ["db.session.*"]
