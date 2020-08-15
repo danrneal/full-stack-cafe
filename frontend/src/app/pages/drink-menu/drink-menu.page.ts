@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { DrinksService, Drink } from '../../services/drinks.service';
 import { ModalController } from '@ionic/angular';
-import { DrinkFormComponent } from './drink-form/drink-form.component';
 import { AuthService } from 'src/app/services/auth.service';
+import { Drink, DrinksService } from '../../services/drinks.service';
+import { DrinkFormComponent } from './drink-form/drink-form.component';
 
 @Component({
   selector: 'app-drink-menu',
@@ -16,7 +16,7 @@ export class DrinkMenuPage implements OnInit {
     private auth: AuthService,
     private modalCtrl: ModalController,
     public drinks: DrinksService
-    ) { }
+  ) {}
 
   ngOnInit() {
     this.drinks.getDrinks();
@@ -29,10 +29,9 @@ export class DrinkMenuPage implements OnInit {
 
     const modal = await this.modalCtrl.create({
       component: DrinkFormComponent,
-      componentProps: { drink: activedrink, isNew: !activedrink }
+      componentProps: { drink: activedrink, isNew: !activedrink },
     });
 
     modal.present();
   }
-
 }

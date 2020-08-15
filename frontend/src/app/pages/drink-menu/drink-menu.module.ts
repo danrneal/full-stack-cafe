@@ -1,19 +1,17 @@
-import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { Routes, RouterModule } from '@angular/router';
-
+import { RouterModule, Routes } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
-
-import { DrinkMenuPage } from './drink-menu.page';
-import { DrinkGraphicComponent } from './drink-graphic/drink-graphic.component';
 import { DrinkFormComponent } from './drink-form/drink-form.component';
+import { DrinkGraphicComponent } from './drink-graphic/drink-graphic.component';
+import { DrinkMenuPage } from './drink-menu.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: DrinkMenuPage
-  }
+    component: DrinkMenuPage,
+  },
 ];
 
 @NgModule({
@@ -21,7 +19,7 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
   ],
   entryComponents: [DrinkFormComponent],
   declarations: [DrinkMenuPage, DrinkGraphicComponent, DrinkFormComponent],

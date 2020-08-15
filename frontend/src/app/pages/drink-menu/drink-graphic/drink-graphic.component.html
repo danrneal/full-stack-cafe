@@ -1,9 +1,10 @@
 <div class="cup">
-  <div 
-  *ngFor="let ingredient of drink && drink.recipe"
-  class="ingredient"
-  [style.flexGrow]="ingredient.parts"
-  [style.background]="ingredient.color">
-    {{t}}
+  <div
+    *ngFor="let ingredient of drink && drink.recipe"
+    class="ingredient"
+    [style.flexGrow]="ingredient.parts"
+    [style.background]="ingredient.color"
+  >
+    {{ t }}
   </div>
 </div>

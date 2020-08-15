@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Drink, DrinksService } from 'src/app/services/drinks.service';
+import { Component, Input, OnInit } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { AuthService } from 'src/app/services/auth.service';
+import { Drink, DrinksService } from 'src/app/services/drinks.service';
 
 @Component({
   selector: 'app-drink-form',
@@ -16,14 +16,14 @@ export class DrinkFormComponent implements OnInit {
     public auth: AuthService,
     private modalCtrl: ModalController,
     private drinkService: DrinksService
-    ) { }
+  ) {}
 
   ngOnInit() {
     if (this.isNew) {
       this.drink = {
         id: -1,
         title: '',
-        recipe: []
+        recipe: [],
       };
       this.addIngredient();
     }
@@ -34,7 +34,7 @@ export class DrinkFormComponent implements OnInit {
   }
 
   addIngredient(i: number = 0) {
-    this.drink.recipe.splice(i + 1, 0, {name: '', color: 'white', parts: 1});
+    this.drink.recipe.splice(i + 1, 0, { name: '', color: 'white', parts: 1 });
   }
 
   removeIngredient(i: number) {

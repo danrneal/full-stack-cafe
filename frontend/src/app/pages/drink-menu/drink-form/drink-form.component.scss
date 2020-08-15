@@ -1,38 +1,38 @@
 ion-title {
-    max-width: 500px;
-    display: inline-flex;
-    padding: 10px 20px;
+  display: inline-flex;
+  max-width: 500px;
+  padding: 10px 20px;
 }
 
 .cancel {
-    float: right;
+  float: right;
 }
 
 ion-label {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .ingredients {
-    text-align: center;
+  text-align: center;
 }
 
 .name {
-    max-width: 175px;
+  max-width: 175px;
 }
 
 .parts {
-    max-width: 160px;
+  max-width: 160px;
 }
 
 .color {
-    max-width: 90px;
+  max-width: 90px;
 }
 
 .hidden {
-    max-width: 140px;
+  max-width: 140px;
 }
 
 .save {
-    margin: 10px;
-    text-align: center;
+  margin: 10px;
+  text-align: center;
 }
