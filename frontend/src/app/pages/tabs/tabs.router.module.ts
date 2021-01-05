@@ -9,11 +9,11 @@ const routes: Routes = [
     children: [
       {
         path: 'drink-menu',
-        loadChildren: '../drink-menu/drink-menu.module#DrinkMenuPageModule',
+        loadChildren: () => import('../drink-menu/drink-menu.module').then(m => m.DrinkMenuPageModule),
       },
       {
         path: 'user-page',
-        loadChildren: '../user-page/user-page.module#UserPagePageModule',
+        loadChildren: () => import('../user-page/user-page.module').then(m => m.UserPagePageModule),
       },
       {
         path: '',
